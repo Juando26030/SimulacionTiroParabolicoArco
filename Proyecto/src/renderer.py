@@ -123,6 +123,7 @@ class Renderer:
         self.screen.blit(controls, (250, 15))
 
     def draw_formulas_panel(self, angle, velocity, gravity, is_flying, max_distance):
+        // hola
         """Dibuja panel con fórmulas físicas y resultados calculados"""
         # Ubicar el panel a la derecha del panel de parámetros - EXTENDIDO
         panel_rect = pygame.Rect(220, 10, 950, 240)
