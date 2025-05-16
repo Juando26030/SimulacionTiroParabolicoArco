@@ -124,8 +124,8 @@ class Renderer:
 
     def draw_formulas_panel(self, angle, velocity, gravity, is_flying, max_distance):
         """Dibuja panel con fórmulas físicas y resultados calculados"""
-        # Ubicar el panel a la derecha del panel de parámetros
-        panel_rect = pygame.Rect(220, 10, 380, 240)
+        # Ubicar el panel a la derecha del panel de parámetros - EXTENDIDO
+        panel_rect = pygame.Rect(220, 10, 680, 240)  # Aumentado ancho de 380 a 680
         pygame.draw.rect(self.screen, self.panel_color, panel_rect)
         pygame.draw.rect(self.screen, (100, 100, 100), panel_rect, 2)
 
@@ -137,47 +137,185 @@ class Renderer:
         v0 = velocity
         theta = angle
         g = gravity
-        sin_theta = round(math.sin(math.radians(theta)), 4)
-        cos_theta = round(math.cos(math.radians(theta)), 4)
-        sin_2theta = round(math.sin(math.radians(2*theta)), 4)
+        sin_theta = round(math.sin(math.radians(theta)), 3)
+        cos_theta = round(math.cos(math.radians(theta)), 3)
+        sin_2theta = round(math.sin(math.radians(2 * theta)), 3)
 
         # Calcular resultados
-        alcance = (v0**2 * sin_2theta) / g
-        altura_max = (v0**2 * sin_theta**2) / (2*g)
-        tiempo_vuelo = (2 * v0 * sin_theta) / g
+        alcance = round((v0 ** 2 * sin_2theta) / g, 3)
+        altura_max = round((v0 ** 2 * sin_theta ** 2) / (2 * g), 3)
+        tiempo_vuelo = round((2 * v0 * sin_theta) / g, 3)
 
-        # Mostrar fórmulas con valores sustituidos
+        # Color para variables dinámicas
+        variable_color = (0, 128, 0)  # Verde
+        formula_color = self.formula_color
+
+        # Posición y espaciado
         y = 50
         spacing = 30
+        column_width = 330  # Ancho de la columna para separar fórmulas simbólicas y numéricas
 
-        # Fórmula de posición horizontal
-        formula = self.formula_font.render(f"Posición x(t): x = v₀·cos(θ)·t = {v0}·{cos_theta}·t", True, self.formula_color)
-        self.screen.blit(formula, (230, y))
+        # FÓRMULA DE POSICIÓN HORIZONTAL - SIMBÓLICA
+        formula_symbolic = self.formula_font.render("Posición x(t): x = v₀·cos(θ)·t", True, formula_color)
+        self.screen.blit(formula_symbolic, (230, y))
+
+        # FÓRMULA DE POSICIÓN HORIZONTAL - NUMÉRICA
+        formula1 = self.formula_font.render("x = ", True, formula_color)
+        formula2 = self.formula_font.render(f"{v0}", True, variable_color)
+        formula3 = self.formula_font.render("·", True, formula_color)
+        formula4 = self.formula_font.render(f"{cos_theta}", True, variable_color)
+        formula5 = self.formula_font.render("·t", True, formula_color)
+
+        x_pos = 230 + column_width
+        self.screen.blit(formula1, (x_pos, y))
+        x_pos += formula1.get_width()
+        self.screen.blit(formula2, (x_pos, y))
+        x_pos += formula2.get_width()
+        self.screen.blit(formula3, (x_pos, y))
+        x_pos += formula3.get_width()
+        self.screen.blit(formula4, (x_pos, y))
+        x_pos += formula4.get_width()
+        self.screen.blit(formula5, (x_pos, y))
         y += spacing
 
-        # Fórmula de posición vertical
-        formula = self.formula_font.render(f"Posición y(t): y = v₀·sin(θ)·t - ½g·t² = {v0}·{sin_theta}·t - 0.5·{g}·t²", True, self.formula_color)
-        self.screen.blit(formula, (230, y))
+        # FÓRMULA DE POSICIÓN VERTICAL - SIMBÓLICA
+        formula_symbolic = self.formula_font.render("Posición y(t): y = v₀·sin(θ)·t - ½g·t²", True, formula_color)
+        self.screen.blit(formula_symbolic, (230, y))
+
+        # FÓRMULA DE POSICIÓN VERTICAL - NUMÉRICA
+        formula1 = self.formula_font.render("y = ", True, formula_color)
+        formula2 = self.formula_font.render(f"{v0}", True, variable_color)
+        formula3 = self.formula_font.render("·", True, formula_color)
+        formula4 = self.formula_font.render(f"{sin_theta}", True, variable_color)
+        formula5 = self.formula_font.render("·t - 0.5·", True, formula_color)
+        formula6 = self.formula_font.render(f"{g}", True, variable_color)
+        formula7 = self.formula_font.render("·t²", True, formula_color)
+
+        x_pos = 230 + column_width
+        self.screen.blit(formula1, (x_pos, y))
+        x_pos += formula1.get_width()
+        self.screen.blit(formula2, (x_pos, y))
+        x_pos += formula2.get_width()
+        self.screen.blit(formula3, (x_pos, y))
+        x_pos += formula3.get_width()
+        self.screen.blit(formula4, (x_pos, y))
+        x_pos += formula4.get_width()
+        self.screen.blit(formula5, (x_pos, y))
+        x_pos += formula5.get_width()
+        self.screen.blit(formula6, (x_pos, y))
+        x_pos += formula6.get_width()
+        self.screen.blit(formula7, (x_pos, y))
         y += spacing
 
-        # Fórmula de alcance horizontal
-        formula = self.formula_font.render(f"Alcance R = (v₀²·sin(2θ))/g = ({v0}²·{sin_2theta})/{g} = {alcance:.2f} m", True, self.formula_color)
-        self.screen.blit(formula, (230, y))
+        # FÓRMULA DE ALCANCE HORIZONTAL - SIMBÓLICA
+        formula_symbolic = self.formula_font.render("Alcance R = (v₀²·sin(2θ))/g", True, formula_color)
+        self.screen.blit(formula_symbolic, (230, y))
+
+        # FÓRMULA DE ALCANCE HORIZONTAL - NUMÉRICA
+        formula1 = self.formula_font.render("R = (", True, formula_color)
+        formula2 = self.formula_font.render(f"{v0}", True, variable_color)
+        formula3 = self.formula_font.render("²·", True, formula_color)
+        formula4 = self.formula_font.render(f"{sin_2theta}", True, variable_color)
+        formula5 = self.formula_font.render(")/", True, formula_color)
+        formula6 = self.formula_font.render(f"{g}", True, variable_color)
+        formula7 = self.formula_font.render(" = ", True, formula_color)
+        formula8 = self.formula_font.render(f"{alcance}", True, variable_color)
+        formula9 = self.formula_font.render(" m", True, formula_color)
+
+        x_pos = 230 + column_width
+        self.screen.blit(formula1, (x_pos, y))
+        x_pos += formula1.get_width()
+        self.screen.blit(formula2, (x_pos, y))
+        x_pos += formula2.get_width()
+        self.screen.blit(formula3, (x_pos, y))
+        x_pos += formula3.get_width()
+        self.screen.blit(formula4, (x_pos, y))
+        x_pos += formula4.get_width()
+        self.screen.blit(formula5, (x_pos, y))
+        x_pos += formula5.get_width()
+        self.screen.blit(formula6, (x_pos, y))
+        x_pos += formula6.get_width()
+        self.screen.blit(formula7, (x_pos, y))
+        x_pos += formula7.get_width()
+        self.screen.blit(formula8, (x_pos, y))
+        x_pos += formula8.get_width()
+        self.screen.blit(formula9, (x_pos, y))
         y += spacing
 
-        # Fórmula de altura máxima
-        formula = self.formula_font.render(f"Altura máx. H = (v₀²·sin²(θ))/(2g) = ({v0}²·{sin_theta}²)/(2·{g}) = {altura_max:.2f} m", True, self.formula_color)
-        self.screen.blit(formula, (230, y))
+        # FÓRMULA DE ALTURA MÁXIMA - SIMBÓLICA
+        formula_symbolic = self.formula_font.render("Altura máx. H = (v₀²·sin²(θ))/(2g)", True, formula_color)
+        self.screen.blit(formula_symbolic, (230, y))
+
+        # FÓRMULA DE ALTURA MÁXIMA - NUMÉRICA
+        formula1 = self.formula_font.render("H = (", True, formula_color)
+        formula2 = self.formula_font.render(f"{v0}", True, variable_color)
+        formula3 = self.formula_font.render("²·", True, formula_color)
+        formula4 = self.formula_font.render(f"{sin_theta}", True, variable_color)
+        formula5 = self.formula_font.render("²)/(2·", True, formula_color)
+        formula6 = self.formula_font.render(f"{g}", True, variable_color)
+        formula7 = self.formula_font.render(") = ", True, formula_color)
+        formula8 = self.formula_font.render(f"{altura_max}", True, variable_color)
+        formula9 = self.formula_font.render(" m", True, formula_color)
+
+        x_pos = 230 + column_width
+        self.screen.blit(formula1, (x_pos, y))
+        x_pos += formula1.get_width()
+        self.screen.blit(formula2, (x_pos, y))
+        x_pos += formula2.get_width()
+        self.screen.blit(formula3, (x_pos, y))
+        x_pos += formula3.get_width()
+        self.screen.blit(formula4, (x_pos, y))
+        x_pos += formula4.get_width()
+        self.screen.blit(formula5, (x_pos, y))
+        x_pos += formula5.get_width()
+        self.screen.blit(formula6, (x_pos, y))
+        x_pos += formula6.get_width()
+        self.screen.blit(formula7, (x_pos, y))
+        x_pos += formula7.get_width()
+        self.screen.blit(formula8, (x_pos, y))
+        x_pos += formula8.get_width()
+        self.screen.blit(formula9, (x_pos, y))
         y += spacing
 
-        # Fórmula de tiempo de vuelo
-        formula = self.formula_font.render(f"Tiempo vuelo T = (2·v₀·sin(θ))/g = (2·{v0}·{sin_theta})/{g} = {tiempo_vuelo:.2f} s", True, self.formula_color)
-        self.screen.blit(formula, (230, y))
+        # FÓRMULA DE TIEMPO DE VUELO - SIMBÓLICA
+        formula_symbolic = self.formula_font.render("Tiempo vuelo T = (2·v₀·sin(θ))/g", True, formula_color)
+        self.screen.blit(formula_symbolic, (230, y))
+
+        # FÓRMULA DE TIEMPO DE VUELO - NUMÉRICA
+        formula1 = self.formula_font.render("T = (2·", True, formula_color)
+        formula2 = self.formula_font.render(f"{v0}", True, variable_color)
+        formula3 = self.formula_font.render("·", True, formula_color)
+        formula4 = self.formula_font.render(f"{sin_theta}", True, variable_color)
+        formula5 = self.formula_font.render(")/", True, formula_color)
+        formula6 = self.formula_font.render(f"{g}", True, variable_color)
+        formula7 = self.formula_font.render(" = ", True, formula_color)
+        formula8 = self.formula_font.render(f"{tiempo_vuelo}", True, variable_color)
+        formula9 = self.formula_font.render(" s", True, formula_color)
+
+        x_pos = 230 + column_width
+        self.screen.blit(formula1, (x_pos, y))
+        x_pos += formula1.get_width()
+        self.screen.blit(formula2, (x_pos, y))
+        x_pos += formula2.get_width()
+        self.screen.blit(formula3, (x_pos, y))
+        x_pos += formula3.get_width()
+        self.screen.blit(formula4, (x_pos, y))
+        x_pos += formula4.get_width()
+        self.screen.blit(formula5, (x_pos, y))
+        x_pos += formula5.get_width()
+        self.screen.blit(formula6, (x_pos, y))
+        x_pos += formula6.get_width()
+        self.screen.blit(formula7, (x_pos, y))
+        x_pos += formula7.get_width()
+        self.screen.blit(formula8, (x_pos, y))
+        x_pos += formula8.get_width()
+        self.screen.blit(formula9, (x_pos, y))
         y += spacing
 
         # Explicación sobre margen de error
         y += 10
-        explain = self.formula_font.render("La diferencia entre predicción y distancia real se debe a:", True, (100, 0, 0))
+        explain = self.formula_font.render("La diferencia entre predicción y distancia real se debe a:", True,
+                                           (100, 0, 0))
         self.screen.blit(explain, (230, y))
         y += 25
 
